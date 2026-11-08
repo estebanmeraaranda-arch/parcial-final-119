@@ -969,3 +969,337 @@ body {
   color: #cbd5e1;
 }
 
+/* Tarjeta de detalle del reporte y despacho en /operador */
+.operador-detalle-card {
+  background: #111827;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.operador-detalle-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.operador-radicado-tag {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.operador-detalle-barrio {
+  margin: 2px 0 0;
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.operador-bloque {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.operador-bloque-titulo {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.operador-ciudadano-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.operador-dato-principal {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.operador-dato-sec {
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.operador-btn-llamar {
+  display: inline-block;
+  text-decoration: none;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.operador-btn-llamar:hover {
+  background: #15803d;
+}
+
+.operador-campo-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.operador-campo-inline label {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.operador-campo-inline select {
+  width: 100%;
+  background: #111827;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+
+.operador-grupo-Actual {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.operador-que-ve {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  background: #111827;
+  border-left: 3px solid #38bdf8;
+  padding: 8px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.operador-ubicacion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 0.76rem;
+}
+
+.operador-ubicacion-grid span {
+  display: block;
+  color: #64748b;
+  margin-bottom: 1px;
+}
+
+.operador-ubicacion-grid strong {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.operador-links-mapa {
+  padding-top: 4px;
+}
+
+.operador-link-gmaps {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 6px 10px;
+  border-radius: 7px;
+}
+
+.operador-link-gmaps:hover {
+  background: rgba(56, 189, 248, 0.22);
+}
+
+.operador-fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.operador-foto-thumb {
+  padding: 0;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111827;
+  cursor: pointer;
+  height: 70px;
+}
+
+.operador-foto-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.operador-sin-fotos {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+.operador-acciones-val {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.operador-btn-validar,
+.operador-btn-descartar {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.operador-btn-validar {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fde047;
+  border-color: rgba(250, 204, 21, 0.45);
+}
+
+.operador-btn-validar:hover,
+.operador-btn-validar.activo {
+  background: #ca8a04;
+  color: #ffffff;
+}
+
+.operador-btn-descartar {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.operador-btn-descartar:hover,
+.operador-btn-descartar.activo {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.operador-btn-info {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 7px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  cursor: pointer;
+}
+
+.operador-btn-info.activo {
+  background: rgba(249, 115, 22, 0.22);
+  color: #fdba74;
+  border-color: #f97316;
+}
+
+.operador-aviso-val {
+  font-size: 0.75rem;
+  color: #fde047;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  padding: 6px 9px;
+  border-radius: 6px;
+}
+
+.operador-unidades-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.operador-unidad-opcion {
+  padding: 7px 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  background: #111827;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.operador-unidad-opcion.seleccionada {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #60a5fa;
+}
+
+.operador-acciones-despacho {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.operador-btn-despachar {
+  padding: 9px 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+.operador-btn-despachar:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.operador-btn-despachar:disabled {
+  background: #1e293b;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.operador-btn-cerrar {
+  padding: 9px 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 8px;
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  cursor: pointer;
+}
+
+.operador-btn-cerrar:hover:not(:disabled) {
+  background: #475569;
+}
+
+.operador-btn-cerrar:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
