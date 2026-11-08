@@ -723,3 +723,249 @@ body {
   margin-top: 8px;
 }
 
+/* Consola de Radio Operador (/operador) */
+.operador-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  height: calc(100vh - 68px);
+  background: #0b1120;
+}
+
+.operador-mapa-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.operador-panel {
+  padding: 16px;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow-y: auto;
+  border-left: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.operador-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.operador-subtitulo {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #f87171;
+}
+
+.operador-titulo {
+  margin: 2px 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.operador-contador {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.operador-filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #111827;
+  border: 1px solid #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.operador-filtro-col label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.operador-filtro-col select {
+  width: 100%;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+
+.operador-seccion-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.operador-seccion-titulo small {
+  font-weight: 600;
+  text-transform: none;
+  color: #64748b;
+}
+
+.operador-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.operador-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #111827;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.operador-item:hover {
+  border-color: #475569;
+  background: #172033;
+}
+
+.operador-item.activo {
+  border-color: #38bdf8;
+  background: #162a45;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+}
+
+.operador-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.operador-grupo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.operador-grupo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.operador-item-hora {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.operador-item-barrio {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.operador-item-dir {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.operador-item-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.operador-estado-badge {
+  font-size: 0.71rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #334155;
+  color: #f8fafc;
+}
+
+.operador-estado-badge.estado-recibido {
+  background: rgba(220, 38, 38, 0.22);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+}
+
+.operador-estado-badge.estado-validado {
+  background: rgba(234, 179, 8, 0.22);
+  color: #fde047;
+  border: 1px solid rgba(250, 204, 21, 0.45);
+}
+
+.operador-estado-badge.estado-unidad-despachada {
+  background: rgba(37, 99, 235, 0.25);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.45);
+}
+
+.operador-estado-badge.estado-cerrado,
+.operador-estado-badge.estado-descartado {
+  background: rgba(100, 116, 139, 0.22);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.operador-unidad-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.operador-vacio {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  background: #111827;
+  border-radius: 10px;
+  border: 1px dashed #334155;
+}
+
+.operador-resumen-mini {
+  padding: 10px 12px;
+  background: #111827;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
