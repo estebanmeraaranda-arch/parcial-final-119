@@ -691,9 +691,9 @@ body {
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  background: rgba(220, 38, 38, 0.22);
+  background: transparent;
   color: #fca5a5;
-  border: 1px solid rgba(248, 113, 113, 0.35);
+  border: 1px solid #dc2626;
   padding: 2px 8px;
   border-radius: 999px;
   margin-bottom: 4px;
@@ -1302,4 +1302,3 @@ body {
   opacity: 0.45;
   cursor: not-allowed;
 }
-
