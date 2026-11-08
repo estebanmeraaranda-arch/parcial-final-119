@@ -1,3 +1,125 @@
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; height: 100%; }
-body { font-family: system-ui, sans-serif; background: #f5f5f4; color: #1c1917; }
+body { font-family: system-ui, sans-serif; background: #f1f5f9; color: #1e293b; }
+
+/* Estilos básicos iniciales para la pantalla Reportar */
+.reportar-contenedor {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.reportar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.reportar-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.reportar-header a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.reportar-bloque {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.reportar-bloque legend {
+  font-weight: 700;
+  padding: 0 6px;
+  color: #0f172a;
+}
+
+.reportar-fila-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.reportar-campo {
+  margin-bottom: 12px;
+}
+
+.reportar-campo label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.reportar-campo input[type="text"],
+.reportar-campo select,
+.reportar-campo textarea {
+  width: 100%;
+  padding: 9px 10px;
+  font-size: 1rem;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.reportar-campo input:disabled {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.reportar-error {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: #dc2626;
+}
+
+.reportar-miniaturas {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.reportar-miniaturas img {
+  width: 90px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-enviar {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-enviar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.reportar-confirmacion {
+  background: #ffffff;
+  border: 2px solid #16a34a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
