@@ -301,3 +301,166 @@ export default function Landing() {
           ))}
         </div>
       </section>
+    {/* SECCIÓN: CÓMO FUNCIONA EL CANAL DIGITAL */}
+      <section style={{ maxWidth: 1200, margin: '40px auto 30px', padding: '0 24px', width: '100%' }}>
+        <div style={{ background: '#111a36', borderRadius: 16, padding: '32px 28px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 24px', textAlign: 'center' }}>
+            Flujo de Atención en 3 Pasos
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>📱</div>
+              <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>1. Reporte del Ciudadano</h4>
+              <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+                Completas el interrogatorio inicial obligatorio, seleccionas tu barrio o punto en el mapa y adjuntas fotos.
+              </p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>🗺️</div>
+              <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>2. Ubicación en Tablero 119</h4>
+              <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+                El radio operador visualiza el punto en el mapa real de Cali, verifica la evidencia y valida la emergencia.
+              </p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>🚒</div>
+              <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>3. Despacho y Seguimiento</h4>
+              <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+                Se asigna la unidad (Máquina, Rescate, Ambulancia o HazMat) y el ciudadano ve el estado actualizado en vivo.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PIE DE PÁGINA */}
+      <footer
+        style={{
+          marginTop: 'auto',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          background: '#070d1e',
+          padding: '24px',
+          fontSize: 13,
+          color: '#64748b',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: '0 auto',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+          <div>
+            <strong>Línea 119 · Bomberos Voluntarios de Cali</strong> &copy; 2026. Proyecto Prototipo Canal Digital.
+          </div>
+          <div>
+            <Link
+              to="/operador"
+              style={{
+                color: '#38bdf8',
+                fontWeight: 600,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                borderRadius: 6,
+                background: 'rgba(56, 189, 248, 0.1)',
+                border: '1px solid rgba(56, 189, 248, 0.2)',
+              }}
+            >
+              🔒 Acceso radio operador
+            </Link>
+          </div>
+        </div>
+      </footer>
+
+      {/* MODAL FLOTANTE: RECOMENDACIONES PARA FOTOS Y VIDEOS (EXTRA OPCIONAL) */}
+      {mostrarModalRecomendaciones && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: 20,
+          }}
+          onClick={() => setMostrarModalRecomendaciones(false)}
+        >
+          <div
+            style={{
+              background: '#0f172a',
+              color: '#f8fafc',
+              maxWidth: 540,
+              width: '100%',
+              borderRadius: 16,
+              padding: 24,
+              border: '1px solid #334155',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 18, color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8 }}>
+                📷 Guía de Bomberos para Captura de Fotos y Videos
+              </h3>
+              <button
+                onClick={() => setMostrarModalRecomendaciones(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  fontSize: 22,
+                  cursor: 'pointer',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ fontSize: 14, color: '#cbd5e1', lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: '#1e293b', padding: 12, borderRadius: 8, borderLeft: '4px solid #ef4444' }}>
+                <strong style={{ color: '#f8fafc' }}>1. Tu seguridad es primero:</strong> Nunca te acerques al fuego, cables caídos o áreas inestables para tomar una fotografía.
+              </div>
+              <div style={{ background: '#1e293b', padding: 12, borderRadius: 8, borderLeft: '4px solid #3b82f6' }}>
+                <strong style={{ color: '#f8fafc' }}>2. Toma un plano general:</strong> Muestra el contexto (si hay casas vecinas en riesgo, árboles, postes de luz o tráfico).
+              </div>
+              <div style={{ background: '#1e293b', padding: 12, borderRadius: 8, borderLeft: '4px solid #eab308' }}>
+                <strong style={{ color: '#f8fafc' }}>3. Puntos de referencia visibles:</strong> Incluye esquinas, placas de nomenclatura o fachadas de edificios para acelerar el arribo.
+              </div>
+              <div style={{ background: '#1e293b', padding: 12, borderRadius: 8, borderLeft: '4px solid #10b981' }}>
+                <strong style={{ color: '#f8fafc' }}>4. Color del humo o sustancia:</strong> Ayuda a los bomberos a identificar qué material está ardiendo o si hay químicos (HazMat).
+              </div>
+            </div>
+
+            <button
+              onClick={() => setMostrarModalRecomendaciones(false)}
+              style={{
+                width: '100%',
+                marginTop: 20,
+                padding: '10px',
+                background: '#dc2626',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
