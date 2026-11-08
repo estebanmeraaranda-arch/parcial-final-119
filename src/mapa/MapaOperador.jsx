@@ -33,21 +33,48 @@ export default function MapaOperador({ reportes = [], seleccionadoId = null, onS
         </LayersControl.BaseLayer>
       </LayersControl>
 
-      {reportes.map((r) => (
-        <Marker
-          key={r.id}
-          position={[r.lat, r.lng]}
-          icon={crearIcono(colorDeGrupo(r.grupo), { seleccionado: r.id === seleccionadoId })}
-          eventHandlers={{ click: () => onSeleccionar?.(r.id) }}
-        >
-          {/* TODO (estudiantes): completar el Popup con nombre, qué ve y estado. */}
-          <Popup>
-            <strong>{r.grupo}</strong> · {r.barrio}
-            <br />
-            {r.estado}
-          </Popup>
-        </Marker>
-      ))}
+      {reportes.map((r) => {
+        const clasesPin = [
+          r.estado === 'Recibido' ? 'pin--pulso' : '',
+          r.estado === 'Cerrado' || r.estado === 'Descartado' ? 'pin--apagado' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')
+
+        const nombreCiudadano = [r.nombres, r.apellidos].filter(Boolean).join(' ') || 'Ciudadano en línea'
+
+        return (
+          <Marker
+            key={r.id}
+            position={[r.lat, r.lng]}
+            icon={crearIcono(colorDeGrupo(r.grupo), {
+              seleccionado: r.id === seleccionadoId,
+              clases: clasesPin,
+            })}
+            eventHandlers={{ click: () => onSeleccionar?.(r.id) }}
+          >
+            <Popup>
+              <div style={{ minWidth: 190, lineHeight: 1.45 }}>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>
+                  Grupo {r.grupo} · {r.barrio}
+                </div>
+                <div style={{ fontSize: 12, color: '#334155', marginBottom: 4 }}>
+                  <strong>Reporta:</strong> {nombreCiudadano}
+                </div>
+                {r.queVe && (
+                  <div style={{ fontSize: 12, color: '#475569', marginBottom: 6 }}>
+                    <strong>Qué ve:</strong> {r.queVe}
+                  </div>
+                )}
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#1e293b' }}>
+                  Estado: {r.estado}
+                  {r.unidad ? ` (${r.unidad})` : ''}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        )
+      })}
 
       <IrAlSeleccionado reporte={seleccionado} />
       <Leyenda reportes={reportes} />
