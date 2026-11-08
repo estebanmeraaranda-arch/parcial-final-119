@@ -220,6 +220,45 @@ body {
   cursor: pointer;
 }
 
+.minimapa-caja {
+  margin-top: 8px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.minimapa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  font-size: 0.8rem;
+  color: #334155;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.minimapa-coords {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  color: #0f172a;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+}
+
+.icono-svg {
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
 .subbloque-300 {
   background: #eff6ff;
   border: 1px solid #93c5fd;

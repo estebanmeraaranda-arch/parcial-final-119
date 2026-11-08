@@ -1,9 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+import '../mapa/mapa.css'
+import { crearIcono } from '../mapa/iconos.js'
 import { GRUPOS, colorDeGrupo } from '../data/grupos.js'
 import { BARRIOS } from '../data/barrios.js'
 import { useReportes } from '../context/ReportesContext.jsx'
 
+const CENTRO_CALI = [3.437, -76.522]
 const ULTIMO_ID_KEY = 'bomberos_119_ultimo_id'
 const ESTADOS_FLUJO = [
   {
@@ -40,10 +45,35 @@ const FORM_INICIAL = {
   pacienteRespira: 'Sí',
 }
 
+// Captura el clic en el mini mapa para ajustar la coordenada exacta (useMapEvents)
+function CapturarClicMapa({ onSeleccionarPunto }) {
+  useMapEvents({
+    click(e) {
+      onSeleccionarPunto({
+        lat: Number(e.latlng.lat.toFixed(5)),
+        lng: Number(e.latlng.lng.toFixed(5)),
+      })
+    },
+  })
+  return null
+}
+
+// Centra el mini mapa cuando el ciudadano elige un barrio
+function CentrarMiniMapa({ coords }) {
+  const map = useMap()
+  useEffect(() => {
+    if (coords) {
+      map.flyTo([coords.lat, coords.lng], 15, { duration: 0.6 })
+    }
+  }, [coords, map])
+  return null
+}
+
 export default function Reportar() {
   const { reportes, agregarReporte } = useReportes()
 
   const [form, setForm] = useState(FORM_INICIAL)
+  const [coordenadas, setCoordenadas] = useState(null)
   const [fotos, setFotos] = useState([])
   const [tocado, setTocado] = useState({})
   const [mostrarTipsFotos, setMostrarTipsFotos] = useState(false)
@@ -74,6 +104,15 @@ export default function Reportar() {
       const soloNumeros = value.replace(/\D/g, '').slice(0, 10)
       setForm({ ...form, telefono: soloNumeros })
       return
+    }
+
+    if (name === 'barrio') {
+      const barrioObj = BARRIOS.find((b) => b.nombre === value)
+      if (barrioObj) {
+        setCoordenadas({ lat: barrioObj.lat, lng: barrioObj.lng })
+      } else {
+        setCoordenadas(null)
+      }
     }
 
     setForm({ ...form, [name]: value })
@@ -127,6 +166,8 @@ export default function Reportar() {
 
     const creado = agregarReporte({
       ...form,
+      lat: coordenadas?.lat,
+      lng: coordenadas?.lng,
       fotos,
     })
 
@@ -138,9 +179,12 @@ export default function Reportar() {
     setUltimoId(null)
     localStorage.removeItem(ULTIMO_ID_KEY)
     setForm(FORM_INICIAL)
+    setCoordenadas(null)
     setFotos([])
     setTocado({})
   }
+
+  const colorPinActual = form.grupo ? colorDeGrupo(Number(form.grupo)) : '#dc2626'
 
   return (
     <div className="reportar-pagina">
@@ -442,6 +486,42 @@ export default function Reportar() {
                     <p className="reportar-error">{errores.edificio}</p>
                   )}
                 </div>
+              </div>
+
+              {/* Extra opcional: Mini mapa interactivo para tocar el punto exacto (useMapEvents) */}
+              <div className="minimapa-caja">
+                <div className="minimapa-header">
+                  <span>
+                    <svg className="icono-svg" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2">
+                      <path d="M12 21s-7-5.686-7-11a7 7 0 1 1 14 0c0 5.314-7 11-7 11z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                    <strong>Punto exacto en el mapa:</strong> toca sobre la calle para afinar la ubicación
+                  </span>
+                  <span className="minimapa-coords">
+                    {coordenadas
+                      ? `${coordenadas.lat}, ${coordenadas.lng}`
+                      : 'Seleccione un barrio o toque el mapa'}
+                  </span>
+                </div>
+                <MapContainer
+                  center={CENTRO_CALI}
+                  zoom={13}
+                  style={{ width: '100%', height: 220 }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <CapturarClicMapa onSeleccionarPunto={setCoordenadas} />
+                  <CentrarMiniMapa coords={coordenadas} />
+                  {coordenadas && (
+                    <Marker
+                      position={[coordenadas.lat, coordenadas.lng]}
+                      icon={crearIcono(colorPinActual, { seleccionado: true, clases: 'pin--pulso' })}
+                    />
+                  )}
+                </MapContainer>
               </div>
             </fieldset>
 
