@@ -145,6 +145,7 @@ export default function Landing() {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: 10,
                 background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
                 color: '#ffffff',
@@ -165,7 +166,6 @@ export default function Landing() {
                 e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(220, 38, 38, 0.5)'
               }}
             >
-              <span style={{ fontSize: 20 }}></span>
               <span>Reportar emergencia</span>
             </Link>
 
@@ -174,6 +174,7 @@ export default function Landing() {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: 10,
                 background: 'rgba(255, 255, 255, 0.1)',
                 color: '#ffffff',
@@ -192,7 +193,6 @@ export default function Landing() {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
               }}
             >
-              <span></span>
               <span>Llamar al 119</span>
             </a>
           </div>
