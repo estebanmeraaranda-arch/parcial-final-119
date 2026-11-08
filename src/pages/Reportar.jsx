@@ -7,6 +7,7 @@ import { crearIcono } from '../mapa/iconos.js'
 import { GRUPOS, colorDeGrupo } from '../data/grupos.js'
 import { BARRIOS } from '../data/barrios.js'
 import { useReportes } from '../context/ReportesContext.jsx'
+import MascotaPerro119 from '../three/MascotaPerro119.jsx'
 
 const CENTRO_CALI = [3.437, -76.522]
 const ULTIMO_ID_KEY = 'bomberos_119_ultimo_id'
@@ -601,8 +602,25 @@ export default function Reportar() {
           </form>
         </section>
 
-        {/* Columna derecha: Tarjeta oscura de Respuesta Automática y Estado en Vivo */}
-        <aside className="panel-confirmacion-dark">
+        {/* Columna derecha: Mascota #2 (Resu-kun) + Tarjeta oscura de Respuesta Automática */}
+        <div>
+          <MascotaPerro119
+            nombre="Resu-kun (Unidad 1)"
+            rol="Mascota de Rescate · Acompañamiento al Ciudadano"
+            numeroCasco="1"
+            colorCasco="#2563eb"
+            colorTraje="#1e293b"
+            colorPelaje="#d97706"
+            mensajeInicial="¡Tranquilo! Completa los datos con calma. Haz clic en mí si necesitas ánimo."
+            mensajeActivo={
+              reporteActual
+                ? `¡Radicado #${reporteActual.radicado} en seguimiento! Estoy atento a tu caso.`
+                : '¡Estamos contigo en Cali! Una foto clara nos ayuda a llegar más rápido.'
+            }
+            altura={195}
+          />
+
+          <aside className="panel-confirmacion-dark">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="badge-respuesta-auto">Respuesta Automática</span>
             <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
@@ -739,7 +757,8 @@ export default function Reportar() {
               </ol>
             </>
           )}
-        </aside>
+          </aside>
+        </div>
       </main>
     </div>
   )

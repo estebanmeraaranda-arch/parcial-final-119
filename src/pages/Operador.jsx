@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import MapaOperador from '../mapa/MapaOperador.jsx'
 import { BARRIOS } from '../data/barrios.js'
+import MascotaPerro119 from '../three/MascotaPerro119.jsx'
 
 // Reportes de PRUEBA para ver el mapa funcionando.
 // TODO (estudiantes): reemplazarlos por los reportes del estado global
@@ -34,6 +35,17 @@ export default function Operador() {
       />
       <aside style={{ padding: 16, background: '#0f172a', color: '#e2e8f0', overflowY: 'auto', borderLeft: '1px solid #1e293b' }}>
         <h2>Radio operador</h2>
+        <MascotaPerro119
+          nombre="Keshi-kun (Unidad 9)"
+          rol="Mascota de Despacho · Central CAD 119"
+          numeroCasco="9"
+          colorCasco="#ea580c"
+          colorTraje="#0f172a"
+          colorPelaje="#b45309"
+          mensajeInicial="Central 119 en línea. Selecciona un reporte para validar y despachar."
+          mensajeActivo="¡Unidades listas para salir a cualquier barrio de Cali!"
+          altura={175}
+        />
         {/* Lista mínima de ejemplo: al hacer clic, el mapa vuela al reporte.
             TODO (estudiantes): lista completa, detalle, llamar/validar y despacho. */}
         <ul style={{ listStyle: 'none', padding: 0 }}>
