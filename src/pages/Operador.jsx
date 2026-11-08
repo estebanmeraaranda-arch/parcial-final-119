@@ -27,7 +27,7 @@ export default function Operador() {
   const seleccionado = REPORTES_DEMO.find((r) => r.id === seleccionadoId)
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', height: '100vh' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', height: 'calc(100vh - 68px)' }}>
       <MapaOperador
         reportes={REPORTES_DEMO}
         seleccionadoId={seleccionadoId}

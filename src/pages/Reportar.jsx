@@ -189,23 +189,12 @@ export default function Reportar() {
 
   return (
     <div className="reportar-pagina">
-      <header className="reportar-topbar">
-        <div className="reportar-brand">
-          <div className="escudo-119">119</div>
-          <div>
-            <h1>Formulario de Reporte Digital · Línea 119 Cali</h1>
-            <p>Todos los campos marcados con (*) son obligatorios según el protocolo Despacho V4</p>
-          </div>
+      <div className="reportar-subbanner">
+        <div className="reportar-subbanner__inner">
+          <strong>Formulario de Reporte Digital · Protocolo Despacho V4</strong>
+          <span>Todos los campos marcados con (*) son obligatorios</span>
         </div>
-        <div className="reportar-topbar-nav">
-          <Link to="/operador" className="btn-volver-top">
-            Tablero Operador
-          </Link>
-          <Link to="/" className="btn-volver-top">
-            Volver al inicio
-          </Link>
-        </div>
-      </header>
+      </div>
 
       <main className="reportar-layout">
         {/* Columna izquierda: Formulario del protocolo */}
