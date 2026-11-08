@@ -2,26 +2,44 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GRUPOS, colorDeGrupo } from '../data/grupos.js'
 import { BARRIOS } from '../data/barrios.js'
+import { useReportes } from '../context/ReportesContext.jsx'
 
-// Pantalla 2 (/reportar): formulario completo con validación, hasta 3 fotos
-// y confirmación básica (pendiente conectar al Context global y aplicar diseño final).
+const ULTIMO_ID_KEY = 'bomberos_119_ultimo_id'
+const ESTADOS_FLUJO = ['Recibido', 'Validado', 'Unidad despachada', 'Cerrado']
+
+const FORM_INICIAL = {
+  nombres: '',
+  apellidos: '',
+  telefono: '',
+  grupo: '',
+  queVe: '',
+  direccion: '',
+  barrio: '',
+  referencia: '',
+  edificio: '',
+  noAplicaEdificio: false,
+  // Preguntas de continuación para grupo 300 (emergencias médicas)
+  pacienteEdadSexo: '',
+  pacienteConsciente: 'Sí',
+  pacienteRespira: 'Sí',
+}
+
 export default function Reportar() {
-  const [form, setForm] = useState({
-    nombres: '',
-    apellidos: '',
-    telefono: '',
-    grupo: '',
-    queVe: '',
-    direccion: '',
-    barrio: '',
-    referencia: '',
-    edificio: '',
-    noAplicaEdificio: false,
-  })
+  const { reportes, agregarReporte } = useReportes()
 
+  const [form, setForm] = useState(FORM_INICIAL)
   const [fotos, setFotos] = useState([])
   const [tocado, setTocado] = useState({})
-  const [reporteEnviado, setReporteEnviado] = useState(null)
+  const [mostrarTipsFotos, setMostrarTipsFotos] = useState(false)
+
+  // Guardamos el id del último reporte enviado para que el ciudadano vea cambios de estado en vivo
+  const [ultimoId, setUltimoId] = useState(() => {
+    const guardado = localStorage.getItem(ULTIMO_ID_KEY)
+    return guardado ? Number(guardado) : null
+  })
+
+  // Buscamos el reporte en tiempo real dentro del Context (se actualiza si el operador lo cambia)
+  const reporteActual = reportes.find((r) => r.id === ultimoId) ?? null
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -48,13 +66,22 @@ export default function Reportar() {
     setTocado({ ...tocado, [e.target.name]: true })
   }
 
+  // Permite subir hasta 3 fotos acumulando o reemplazando y quitar cualquiera
   const handleFotos = (e) => {
-    const archivos = Array.from(e.target.files || []).slice(0, 3)
-    const urls = archivos.map((file) => ({
+    const archivos = Array.from(e.target.files || [])
+    if (!archivos.length) return
+
+    const nuevas = archivos.map((file) => ({
       nombre: file.name,
       url: URL.createObjectURL(file),
     }))
-    setFotos(urls)
+
+    setFotos((prev) => [...prev, ...nuevas].slice(0, 3))
+    e.target.value = ''
+  }
+
+  const quitarFoto = (indice) => {
+    setFotos((prev) => prev.filter((_, i) => i !== indice))
   }
 
   // Validaciones de todos los campos obligatorios del protocolo
@@ -83,61 +110,101 @@ export default function Reportar() {
     e.preventDefault()
     if (!formularioValido) return
 
-    const barrioObj = BARRIOS.find((b) => b.nombre === form.barrio)
-    const nuevoReporte = {
-      id: Math.floor(1000 + Math.random() * 9000),
-      hora: new Date().toLocaleTimeString('es-CO', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      estado: 'Recibido',
+    const creado = agregarReporte({
       ...form,
-      grupo: Number(form.grupo),
-      lat: barrioObj?.lat ?? 3.437,
-      lng: barrioObj?.lng ?? -76.522,
       fotos,
-    }
+    })
 
-    setReporteEnviado(nuevoReporte)
+    setUltimoId(creado.id)
+    localStorage.setItem(ULTIMO_ID_KEY, String(creado.id))
+  }
+
+  const iniciarNuevoReporte = () => {
+    setUltimoId(null)
+    localStorage.removeItem(ULTIMO_ID_KEY)
+    setForm(FORM_INICIAL)
+    setFotos([])
+    setTocado({})
   }
 
   return (
     <main className="reportar-contenedor">
       <header className="reportar-header">
         <h1>Reportar emergencia · Línea 119</h1>
-        <Link to="/">← Volver al inicio</Link>
+        <div style={{ display: 'flex', gap: 14 }}>
+          <Link to="/operador">Ir al operador</Link>
+          <Link to="/">← Volver al inicio</Link>
+        </div>
       </header>
 
-      {reporteEnviado ? (
+      {reporteActual ? (
         <section className="reportar-confirmacion">
-          <h2>¡Reporte recibido!</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ margin: 0 }}>¡Reporte recibido en Central 119!</h2>
+            <span className="badge-radicado">Radicado #{reporteActual.radicado}</span>
+          </div>
+
           <p>
-            <strong>Número de radicado:</strong> #119-{reporteEnviado.id}
+            Hemos registrado tu reporte a las <strong>{reporteActual.hora}</strong> para el barrio{' '}
+            <strong>{reporteActual.barrio}</strong> ({reporteActual.direccion}). Mantén disponible el
+            teléfono <strong>{reporteActual.telefono}</strong>.
           </p>
-          <p>
-            <strong>Hora de registro:</strong> {reporteEnviado.hora}
-          </p>
-          <p>
-            <strong>Estado actual:</strong> {reporteEnviado.estado}
-          </p>
-          <p>
-            <strong>Ubicación:</strong> {reporteEnviado.direccion} ({reporteEnviado.barrio})
-          </p>
-          {reporteEnviado.fotos.length > 0 && (
-            <div className="reportar-miniaturas">
-              {reporteEnviado.fotos.map((f, i) => (
-                <img key={i} src={f.url} alt={f.nombre} />
-              ))}
+
+          {/* Aviso si el operador solicita más información */}
+          {reporteActual.solicitudInfo && (
+            <div className="alerta-operador">
+              ⚠️ <strong>Aviso del radio operador:</strong> Central 119 solicita información adicional
+              o confirmación telefónica sobre tu emergencia.
             </div>
           )}
-          <p style={{ marginTop: 16 }}>
-            <button
-              type="button"
-              onClick={() => setReporteEnviado(null)}
-            >
-              Crear otro reporte
+
+          {/* Barra de progreso en vivo del estado del reporte */}
+          <div className="estado-seguimiento">
+            <h3>Estado actual del reporte: {reporteActual.estado}</h3>
+            {reporteActual.estado === 'Descartado' ? (
+              <p className="reportar-error">
+                Este reporte fue marcado como Descartado (falso o duplicado) por el radio operador.
+              </p>
+            ) : (
+              <ol className="lista-estados">
+                {ESTADOS_FLUJO.map((paso, idx) => {
+                  const indiceActual = ESTADOS_FLUJO.indexOf(reporteActual.estado)
+                  const completado = idx <= indiceActual
+                  const esActual = paso === reporteActual.estado
+                  return (
+                    <li
+                      key={paso}
+                      className={`paso-estado ${completado ? 'paso-completado' : ''} ${
+                        esActual ? 'paso-actual' : ''
+                      }`}
+                    >
+                      <strong>{idx + 1}. {paso}</strong>
+                      {paso === 'Unidad despachada' && reporteActual.unidad && (
+                        <span> — Unidad en camino: {reporteActual.unidad}</span>
+                      )}
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
+          </div>
+
+          {reporteActual.fotos?.length > 0 && (
+            <div>
+              <strong>Fotos enviadas ({reporteActual.fotos.length}):</strong>
+              <div className="reportar-miniaturas">
+                {reporteActual.fotos.map((f, i) => (
+                  <img key={i} src={f.url} alt={f.nombre} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop: 18, display: 'flex', gap: 10 }}>
+            <button type="button" className="btn-secundario" onClick={iniciarNuevoReporte}>
+              Registrar otro reporte
             </button>
-          </p>
+          </div>
         </section>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
@@ -228,6 +295,52 @@ export default function Reportar() {
                 <p className="reportar-error">{errores.grupo}</p>
               )}
             </div>
+
+            {/* Preguntas de continuación si selecciona el grupo 300 (Rescates y médicas) */}
+            {Number(form.grupo) === 300 && (
+              <div className="subbloque-300">
+                <strong>Datos adicionales para emergencia médica / rescate (Código 300):</strong>
+                <div className="reportar-fila-2" style={{ marginTop: 8 }}>
+                  <div className="reportar-campo">
+                    <label htmlFor="pacienteEdadSexo">Sexo y edad aproximada</label>
+                    <input
+                      id="pacienteEdadSexo"
+                      name="pacienteEdadSexo"
+                      type="text"
+                      placeholder="Ej. Hombre, 45 años"
+                      value={form.pacienteEdadSexo}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="reportar-campo">
+                    <label htmlFor="pacienteConsciente">¿Está consciente?</label>
+                    <select
+                      id="pacienteConsciente"
+                      name="pacienteConsciente"
+                      value={form.pacienteConsciente}
+                      onChange={handleChange}
+                    >
+                      <option value="Sí">Sí</option>
+                      <option value="No">No</option>
+                      <option value="No sabe">No sabe</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="reportar-campo">
+                  <label htmlFor="pacienteRespira">¿Respira?</label>
+                  <select
+                    id="pacienteRespira"
+                    name="pacienteRespira"
+                    value={form.pacienteRespira}
+                    onChange={handleChange}
+                  >
+                    <option value="Sí">Sí</option>
+                    <option value="Con dificultad">Con dificultad</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+            )}
 
             <div className="reportar-campo">
               <label htmlFor="queVe">¿Qué ve? (Descripción de lo que está pasando) *</label>
@@ -336,20 +449,54 @@ export default function Reportar() {
           </fieldset>
 
           <fieldset className="reportar-bloque">
-            <legend>4. Fotos de la emergencia (opcional, hasta 3)</legend>
+            <legend>4. Fotos de la emergencia (hasta 3 imágenes)</legend>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <label htmlFor="fotos" style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                Adjuntar imágenes ({fotos.length}/3)
+              </label>
+              <button
+                type="button"
+                className="btn-link"
+                onClick={() => setMostrarTipsFotos(!mostrarTipsFotos)}
+              >
+                {mostrarTipsFotos ? 'Ocultar recomendaciones' : '💡 Recomendaciones para tomar fotos'}
+              </button>
+            </div>
+
+            {mostrarTipsFotos && (
+              <div className="caja-tips">
+                <strong>Recomendaciones de Bomberos Cali:</strong>
+                <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                  <li>Mantén una distancia segura; nunca te acerques al fuego, humo o cables caídos.</li>
+                  <li>Toma al menos 1 foto general donde se vea la fachada o el entorno para ubicar la unidad.</li>
+                  <li>Si es accidente vial, enfoca cuántos vehículos están involucrados sin obstruir el paso.</li>
+                </ul>
+              </div>
+            )}
+
             <div className="reportar-campo">
-              <label htmlFor="fotos">Subir imágenes (máximo 3)</label>
               <input
                 id="fotos"
                 type="file"
                 multiple
                 accept="image/*"
                 onChange={handleFotos}
+                disabled={fotos.length >= 3}
               />
               {fotos.length > 0 && (
                 <div className="reportar-miniaturas">
                   {fotos.map((f, i) => (
-                    <img key={i} src={f.url} alt={f.nombre} />
+                    <div key={i} className="miniatura-item">
+                      <img src={f.url} alt={f.nombre} />
+                      <button
+                        type="button"
+                        className="btn-quitar-foto"
+                        onClick={() => quitarFoto(i)}
+                      >
+                        ✕ Quitar
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
