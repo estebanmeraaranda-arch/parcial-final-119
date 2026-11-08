@@ -22,7 +22,7 @@ export default function Landing() {
       <header
         style={{
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          background: 'rgba(11, 19, 43, 0.95)',
+          background: '#070d1e',
           backdropFilter: 'blur(10px)',
           position: 'sticky',
           top: 0,
@@ -32,27 +32,13 @@ export default function Landing() {
       >
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                background: '#dc2626',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 22,
-                boxShadow: '0 0 15px rgba(220, 38, 38, 0.6)',
-              }}
-            >
-              🚒
-            </div>
+
             <div>
               <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: '0.04em', color: '#ffffff' }}>
-                BOMBEROS CALI · LÍNEA 119
+                Cuerpo de Bomberos · Linea 119
               </div>
               <div style={{ fontSize: 12, color: '#94a3b8' }}>
-                Benemérito Cuerpo de Bomberos Voluntarios de Santiago de Cali
+                Bomberos Voluntarios de Santiago de Cali
               </div>
             </div>
           </div>
@@ -61,7 +47,7 @@ export default function Landing() {
             <button
               onClick={() => setMostrarModalRecomendaciones(true)}
               style={{
-                background: 'rgba(255, 255, 255, 0.08)',
+                background: 'rgba(56, 50, 50, 0.08)',
                 color: '#e2e8f0',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 padding: '8px 14px',
@@ -72,7 +58,7 @@ export default function Landing() {
                 transition: 'all 0.2s',
               }}
             >
-              📷 Guía de Fotos & Videos
+              Guía de Fotos & Videos
             </button>
             <Link
               to="/operador"
@@ -119,9 +105,9 @@ export default function Landing() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: 'rgba(220, 38, 38, 0.2)',
+              background: 'rgba(84, 24, 24, 0)',
               border: '1px solid rgba(220, 38, 38, 0.5)',
-              color: '#fca5a5',
+              color: '#fefefe',
               padding: '6px 14px',
               borderRadius: 9999,
               fontSize: 13,
@@ -179,7 +165,7 @@ export default function Landing() {
                 e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(220, 38, 38, 0.5)'
               }}
             >
-              <span style={{ fontSize: 20 }}>🚨</span>
+              <span style={{ fontSize: 20 }}></span>
               <span>Reportar emergencia</span>
             </Link>
 
@@ -206,15 +192,13 @@ export default function Landing() {
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
               }}
             >
-              <span>📞</span>
+              <span></span>
               <span>Llamar al 119</span>
             </a>
           </div>
 
           <div style={{ marginTop: 20, display: 'flex', gap: 20, color: '#94a3b8', fontSize: 13 }}>
-            <span>✓ Geolocalización asistida</span>
-            <span>✓ Respuesta con radicado</span>
-            <span>✓ 100% Gratuito</span>
+
           </div>
         </div>
 
@@ -309,21 +293,21 @@ export default function Landing() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 36, marginBottom: 10 }}>📱</div>
+              <div style={{ fontSize: 36, marginBottom: 10 }}></div>
               <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>1. Reporte del Ciudadano</h4>
               <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
                 Completas el interrogatorio inicial obligatorio, seleccionas tu barrio o punto en el mapa y adjuntas fotos.
               </p>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 36, marginBottom: 10 }}>🗺️</div>
+              <div style={{ fontSize: 36, marginBottom: 10 }}></div>
               <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>2. Ubicación en Tablero 119</h4>
               <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
                 El radio operador visualiza el punto en el mapa real de Cali, verifica la evidencia y valida la emergencia.
               </p>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 36, marginBottom: 10 }}>🚒</div>
+              <div style={{ fontSize: 36, marginBottom: 10 }}></div>
               <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>3. Despacho y Seguimiento</h4>
               <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
                 Se asigna la unidad (Máquina, Rescate, Ambulancia o HazMat) y el ciudadano ve el estado actualizado en vivo.
@@ -359,23 +343,6 @@ export default function Landing() {
             <strong>Línea 119 · Bomberos Voluntarios de Cali</strong> &copy; 2026. Proyecto Prototipo Canal Digital.
           </div>
           <div>
-            <Link
-              to="/operador"
-              style={{
-                color: '#38bdf8',
-                fontWeight: 600,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 12px',
-                borderRadius: 6,
-                background: 'rgba(56, 189, 248, 0.1)',
-                border: '1px solid rgba(56, 189, 248, 0.2)',
-              }}
-            >
-              🔒 Acceso radio operador
-            </Link>
           </div>
         </div>
       </footer>
@@ -411,7 +378,7 @@ export default function Landing() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ margin: 0, fontSize: 18, color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8 }}>
-                📷 Guía de Bomberos para Captura de Fotos y Videos
+                Guía de Bomberos para Captura de Fotos y Videos
               </h3>
               <button
                 onClick={() => setMostrarModalRecomendaciones(false)}
