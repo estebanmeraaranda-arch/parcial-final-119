@@ -7,6 +7,7 @@ import { crearIcono } from '../mapa/iconos.js'
 import { GRUPOS, colorDeGrupo } from '../data/grupos.js'
 import { BARRIOS } from '../data/barrios.js'
 import { useReportes } from '../context/ReportesContext.jsx'
+import MascotaPerro119 from '../three/MascotaPerro119.jsx'
 
 const CENTRO_CALI = [3.437, -76.522]
 const ULTIMO_ID_KEY = 'bomberos_119_ultimo_id'
@@ -188,23 +189,12 @@ export default function Reportar() {
 
   return (
     <div className="reportar-pagina">
-      <header className="reportar-topbar">
-        <div className="reportar-brand">
-          <div className="escudo-119">119</div>
-          <div>
-            <h1>Formulario de Reporte Digital · Línea 119 Cali</h1>
-            <p>Todos los campos marcados con (*) son obligatorios según el protocolo Despacho V4</p>
-          </div>
+      <div className="reportar-subbanner">
+        <div className="reportar-subbanner__inner">
+          <strong>Formulario de Reporte Digital · Protocolo Despacho V4</strong>
+          <span>Todos los campos marcados con (*) son obligatorios</span>
         </div>
-        <div className="reportar-topbar-nav">
-          <Link to="/operador" className="btn-volver-top">
-            Tablero Operador
-          </Link>
-          <Link to="/" className="btn-volver-top">
-            Volver al inicio
-          </Link>
-        </div>
-      </header>
+      </div>
 
       <main className="reportar-layout">
         {/* Columna izquierda: Formulario del protocolo */}
@@ -601,8 +591,25 @@ export default function Reportar() {
           </form>
         </section>
 
-        {/* Columna derecha: Tarjeta oscura de Respuesta Automática y Estado en Vivo */}
-        <aside className="panel-confirmacion-dark">
+        {/* Columna derecha: Mascota #2 (Resu-kun) + Tarjeta oscura de Respuesta Automática */}
+        <div>
+          <MascotaPerro119
+            nombre="Resu-kun (Unidad 1)"
+            rol="Mascota de Rescate · Acompañamiento al Ciudadano"
+            numeroCasco="1"
+            colorCasco="#2563eb"
+            colorTraje="#1e293b"
+            colorPelaje="#d97706"
+            mensajeInicial="¡Tranquilo! Completa los datos con calma. Haz clic en mí si necesitas ánimo."
+            mensajeActivo={
+              reporteActual
+                ? `¡Radicado #${reporteActual.radicado} en seguimiento! Estoy atento a tu caso.`
+                : '¡Estamos contigo en Cali! Una foto clara nos ayuda a llegar más rápido.'
+            }
+            altura={195}
+          />
+
+          <aside className="panel-confirmacion-dark">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="badge-respuesta-auto">Respuesta Automática</span>
             <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
@@ -739,7 +746,8 @@ export default function Reportar() {
               </ol>
             </>
           )}
-        </aside>
+          </aside>
+        </div>
       </main>
     </div>
   )
