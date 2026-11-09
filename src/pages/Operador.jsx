@@ -136,7 +136,11 @@ export default function Operador() {
                 <span className="operador-radicado-tag">
                   Radicado {seleccionado.radicado || `#${seleccionado.id}`} · {seleccionado.hora || '--:--'}
                 </span>
-                <h3 className="operador-detalle-barrio">{seleccionado.barrio}</h3>
+                <h3 className="operador-detalle-barrio">
+                  {seleccionado.comuna
+                    ? `${seleccionado.comuna} · ${seleccionado.barrio}`
+                    : seleccionado.barrio}
+                </h3>
               </div>
               <span
                 className={`operador-estado-badge estado-${seleccionado.estado
@@ -211,12 +215,16 @@ export default function Operador() {
 
               <div className="operador-ubicacion-grid">
                 <div>
-                  <span>Dirección:</span>
-                  <strong>{seleccionado.direccion || 'No especificada'}</strong>
+                  <span>Comuna / Sector:</span>
+                  <strong>{seleccionado.comuna || 'Santiago de Cali'}</strong>
                 </div>
                 <div>
                   <span>Barrio:</span>
                   <strong>{seleccionado.barrio}</strong>
+                </div>
+                <div>
+                  <span>Dirección:</span>
+                  <strong>{seleccionado.direccion || 'No especificada'}</strong>
                 </div>
                 <div>
                   <span>Punto de referencia:</span>
@@ -248,17 +256,24 @@ export default function Operador() {
               </div>
               {seleccionado.fotos && seleccionado.fotos.length > 0 ? (
                 <div className="operador-fotos-grid">
-                  {seleccionado.fotos.map((src, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className="operador-foto-thumb"
-                      onClick={() => setFotoAmpliada(src)}
-                      title="Ver imagen en tamaño completo"
-                    >
-                      <img src={src} alt={`Evidencia ${idx + 1} del reporte`} />
-                    </button>
-                  ))}
+                  {seleccionado.fotos.map((f, idx) => {
+                    const srcFoto = typeof f === 'string' ? f : f?.url
+                    if (!srcFoto) return null
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        className="operador-foto-thumb"
+                        onClick={() => setFotoAmpliada(srcFoto)}
+                        title="Ver imagen en tamaño completo"
+                      >
+                        <img
+                          src={srcFoto}
+                          alt={f?.nombre || `Evidencia ${idx + 1} del reporte`}
+                        />
+                      </button>
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="operador-sin-fotos">
@@ -428,7 +443,9 @@ export default function Operador() {
                     </span>
                   </div>
 
-                  <div className="operador-item-barrio">{r.barrio}</div>
+                  <div className="operador-item-barrio">
+                    {r.comuna ? `${r.comuna} · ${r.barrio}` : r.barrio}
+                  </div>
                   {r.direccion && (
                     <div className="operador-item-dir">{r.direccion}</div>
                   )}

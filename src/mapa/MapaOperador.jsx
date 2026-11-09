@@ -9,7 +9,7 @@ const CENTRO_CALI = [3.437, -76.522]
 
 // Mapa REAL de Cali (OpenStreetMap a través de Leaflet). No necesita API key.
 // Props:
-//   reportes: [{ id, grupo, lat, lng, estado, barrio }]
+//   reportes: [{ id, grupo, lat, lng, estado, barrio, comuna }]
 //   seleccionadoId: id del reporte seleccionado (o null)
 //   onSeleccionar: (id) => void
 export default function MapaOperador({ reportes = [], seleccionadoId = null, onSeleccionar }) {
@@ -56,7 +56,7 @@ export default function MapaOperador({ reportes = [], seleccionadoId = null, onS
             <Popup>
               <div style={{ minWidth: 190, lineHeight: 1.45 }}>
                 <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>
-                  Grupo {r.grupo} · {r.barrio}
+                  Grupo {r.grupo} · {r.comuna ? `${r.comuna} (${r.barrio})` : r.barrio}
                 </div>
                 <div style={{ fontSize: 12, color: '#334155', marginBottom: 4 }}>
                   <strong>Reporta:</strong> {nombreCiudadano}

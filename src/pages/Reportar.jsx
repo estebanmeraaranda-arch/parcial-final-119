@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import '../mapa/mapa.css'
 import { crearIcono } from '../mapa/iconos.js'
 import { GRUPOS, colorDeGrupo } from '../data/grupos.js'
-import { BARRIOS } from '../data/barrios.js'
+import { BARRIOS, COMUNAS_CALI } from '../data/barrios.js'
 import { useReportes } from '../context/ReportesContext.jsx'
 import MascotaPerro119 from '../three/MascotaPerro119.jsx'
 
@@ -36,14 +35,57 @@ const FORM_INICIAL = {
   telefono: '',
   grupo: '',
   queVe: '',
-  direccion: '',
+  comuna: '',
   barrio: '',
+  direccion: '',
   referencia: '',
   edificio: '',
   noAplicaEdificio: false,
   pacienteEdadSexo: '',
   pacienteConsciente: 'Sí',
   pacienteRespira: 'Sí',
+}
+
+// Convierte un archivo de imagen a DataURL comprimido para que se vea en el reporte y se guarde en localStorage
+function archivoADataUrl(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const dataUrlOriginal = ev.target?.result
+      if (typeof dataUrlOriginal !== 'string') {
+        resolve(null)
+        return
+      }
+      const img = new Image()
+      img.onload = () => {
+        try {
+          const maxDim = 900
+          let { width, height } = img
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width)
+              width = maxDim
+            } else {
+              width = Math.round((width * maxDim) / height)
+              height = maxDim
+            }
+          }
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, width, height)
+          resolve(canvas.toDataURL('image/jpeg', 0.8))
+        } catch {
+          resolve(dataUrlOriginal)
+        }
+      }
+      img.onerror = () => resolve(dataUrlOriginal)
+      img.src = dataUrlOriginal
+    }
+    reader.onerror = () => resolve(null)
+    reader.readAsDataURL(file)
+  })
 }
 
 // Captura el clic en el mini mapa para ajustar la coordenada exacta (useMapEvents)
@@ -59,7 +101,7 @@ function CapturarClicMapa({ onSeleccionarPunto }) {
   return null
 }
 
-// Centra el mini mapa cuando el ciudadano elige un barrio
+// Centra el mini mapa cuando el ciudadano elige una comuna o barrio
 function CentrarMiniMapa({ coords }) {
   const map = useMap()
   useEffect(() => {
@@ -107,12 +149,19 @@ export default function Reportar() {
       return
     }
 
+    if (name === 'comuna') {
+      const comunaObj = COMUNAS_CALI.find((c) => c.codigo === value)
+      if (comunaObj) {
+        setCoordenadas({ lat: comunaObj.lat, lng: comunaObj.lng })
+      }
+    }
+
     if (name === 'barrio') {
-      const barrioObj = BARRIOS.find((b) => b.nombre === value)
+      const barrioObj = BARRIOS.find(
+        (b) => b.nombre.toLowerCase() === value.trim().toLowerCase()
+      )
       if (barrioObj) {
         setCoordenadas({ lat: barrioObj.lat, lng: barrioObj.lng })
-      } else {
-        setCoordenadas(null)
       }
     }
 
@@ -123,17 +172,22 @@ export default function Reportar() {
     setTocado({ ...tocado, [e.target.name]: true })
   }
 
-  const handleFotos = (e) => {
+  const handleFotos = async (e) => {
     const archivos = Array.from(e.target.files || [])
+    e.target.value = ''
     if (!archivos.length) return
 
-    const nuevas = archivos.map((file) => ({
-      nombre: file.name,
-      url: URL.createObjectURL(file),
-    }))
+    const procesadas = await Promise.all(
+      archivos.slice(0, 3).map(async (file) => {
+        const dataUrl = await archivoADataUrl(file)
+        return dataUrl ? { nombre: file.name, url: dataUrl } : null
+      })
+    )
 
-    setFotos((prev) => [...prev, ...nuevas].slice(0, 3))
-    e.target.value = ''
+    const validas = procesadas.filter(Boolean)
+    if (validas.length > 0) {
+      setFotos((prev) => [...prev, ...validas].slice(0, 3))
+    }
   }
 
   const quitarFoto = (indice) => {
@@ -149,8 +203,9 @@ export default function Reportar() {
         : '',
     grupo: form.grupo === '' ? 'Seleccione un grupo de emergencia.' : '',
     queVe: form.queVe.trim() === '' ? 'Describa qué está viendo en la emergencia.' : '',
+    comuna: form.comuna === '' ? 'Seleccione la comuna o sector sugerido.' : '',
+    barrio: form.barrio.trim() === '' ? 'Escriba el nombre del barrio.' : '',
     direccion: form.direccion.trim() === '' ? 'La dirección es obligatoria.' : '',
-    barrio: form.barrio === '' ? 'Seleccione el barrio.' : '',
     referencia:
       form.referencia.trim() === '' ? 'El punto de referencia es obligatorio.' : '',
     edificio:
@@ -384,29 +439,56 @@ export default function Reportar() {
 
               <div className="reportar-fila-2">
                 <div className="reportar-campo">
-                  <label htmlFor="barrio">
-                    Barrio (con coordenadas en mapa) <span className="asterisco">*</span>
+                  <label htmlFor="comuna">
+                    Comuna / Sector sugerido (ubica el mapa) <span className="asterisco">*</span>
                   </label>
                   <select
-                    id="barrio"
-                    name="barrio"
-                    value={form.barrio}
+                    id="comuna"
+                    name="comuna"
+                    value={form.comuna}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     required
                   >
-                    <option value="">-- Seleccione un barrio de Cali --</option>
-                    {BARRIOS.map((b) => (
-                      <option key={b.nombre} value={b.nombre}>
-                        {b.nombre} ({b.lat}, {b.lng})
+                    <option value="">-- Seleccione una comuna de Cali --</option>
+                    {COMUNAS_CALI.map((c) => (
+                      <option key={c.codigo} value={c.codigo}>
+                        {c.nombre}
                       </option>
                     ))}
                   </select>
+                  {tocado.comuna && errores.comuna && (
+                    <p className="reportar-error">{errores.comuna}</p>
+                  )}
+                </div>
+
+                <div className="reportar-campo">
+                  <label htmlFor="barrio">
+                    Barrio <span className="asterisco">*</span>
+                  </label>
+                  <input
+                    id="barrio"
+                    name="barrio"
+                    type="text"
+                    list="barrios-sugeridos-cali"
+                    placeholder="Escriba el barrio (ej. San Antonio, Meléndez...)"
+                    value={form.barrio}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    required
+                  />
+                  <datalist id="barrios-sugeridos-cali">
+                    {BARRIOS.map((b) => (
+                      <option key={b.nombre} value={b.nombre} />
+                    ))}
+                  </datalist>
                   {tocado.barrio && errores.barrio && (
                     <p className="reportar-error">{errores.barrio}</p>
                   )}
                 </div>
+              </div>
 
+              <div className="reportar-fila-2">
                 <div className="reportar-campo">
                   <label htmlFor="direccion">
                     Dirección <span className="asterisco">*</span>
@@ -426,9 +508,7 @@ export default function Reportar() {
                     <p className="reportar-error">{errores.direccion}</p>
                   )}
                 </div>
-              </div>
 
-              <div className="reportar-fila-2">
                 <div className="reportar-campo">
                   <label htmlFor="referencia">
                     Punto de referencia <span className="asterisco">*</span>
@@ -447,35 +527,35 @@ export default function Reportar() {
                     <p className="reportar-error">{errores.referencia}</p>
                   )}
                 </div>
+              </div>
 
-                <div className="reportar-campo">
-                  <label htmlFor="edificio">
-                    Nombre del edificio / conjunto <span className="asterisco">*</span>
-                  </label>
+              <div className="reportar-campo">
+                <label htmlFor="edificio">
+                  Nombre del edificio / conjunto <span className="asterisco">*</span>
+                </label>
+                <input
+                  id="edificio"
+                  name="edificio"
+                  type="text"
+                  placeholder="Ej. Edificio Mirador"
+                  value={form.edificio}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={form.noAplicaEdificio}
+                  required={!form.noAplicaEdificio}
+                />
+                <label className="checkbox-no-aplica">
                   <input
-                    id="edificio"
-                    name="edificio"
-                    type="text"
-                    placeholder="Ej. Edificio Mirador"
-                    value={form.edificio}
+                    type="checkbox"
+                    name="noAplicaEdificio"
+                    checked={form.noAplicaEdificio}
                     onChange={handleChange}
-                    onBlur={handleBlur}
-                    disabled={form.noAplicaEdificio}
-                    required={!form.noAplicaEdificio}
                   />
-                  <label className="checkbox-no-aplica">
-                    <input
-                      type="checkbox"
-                      name="noAplicaEdificio"
-                      checked={form.noAplicaEdificio}
-                      onChange={handleChange}
-                    />
-                    No aplica (casa o vía pública)
-                  </label>
-                  {!form.noAplicaEdificio && tocado.edificio && errores.edificio && (
-                    <p className="reportar-error">{errores.edificio}</p>
-                  )}
-                </div>
+                  No aplica (casa o vía pública)
+                </label>
+                {!form.noAplicaEdificio && tocado.edificio && errores.edificio && (
+                  <p className="reportar-error">{errores.edificio}</p>
+                )}
               </div>
 
               {/* Extra opcional: Mini mapa interactivo para tocar el punto exacto (useMapEvents) */}
@@ -491,7 +571,7 @@ export default function Reportar() {
                   <span className="minimapa-coords">
                     {coordenadas
                       ? `${coordenadas.lat}, ${coordenadas.lng}`
-                      : 'Seleccione un barrio o toque el mapa'}
+                      : 'Seleccione una comuna o toque el mapa'}
                   </span>
                 </div>
                 <MapContainer
@@ -600,152 +680,181 @@ export default function Reportar() {
             colorCasco="#2563eb"
             colorTraje="#1e293b"
             colorPelaje="#d97706"
-            mensajeInicial="¡Tranquilo! Completa los datos con calma. Haz clic en mí si necesitas ánimo."
+            mensajeInicial="Tranquilo, completa los datos con calma. Haz clic en mí si necesitas ánimo."
             mensajeActivo={
               reporteActual
-                ? `¡Radicado #${reporteActual.radicado} en seguimiento! Estoy atento a tu caso.`
-                : '¡Estamos contigo en Cali! Una foto clara nos ayuda a llegar más rápido.'
+                ? `Radicado #${reporteActual.radicado} en seguimiento. Estoy atento a tu caso.`
+                : 'Estamos contigo en Cali. Una foto clara nos ayuda a llegar más rápido.'
             }
             altura={195}
           />
 
           <aside className="panel-confirmacion-dark">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="badge-respuesta-auto">Respuesta Automática</span>
-            <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-              {reporteActual ? `Hora: ${reporteActual.hora}` : 'Central 119 Cali'}
-            </span>
-          </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="badge-respuesta-auto">Respuesta Automática</span>
+              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                {reporteActual ? `Hora: ${reporteActual.hora}` : 'Central 119 Cali'}
+              </span>
+            </div>
 
-          {reporteActual ? (
-            <>
-              <div>
-                <h2 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>
-                  ¡Reporte recibido en Central 119!
-                </h2>
-                <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-                  El radio operador ya ve tu punto exacto en el mapa de Cali (Barrio{' '}
-                  <strong>{reporteActual.barrio}</strong>). Mantén tu teléfono{' '}
-                  <strong>{reporteActual.telefono}</strong> disponible.
-                </p>
-              </div>
-
-              {reporteActual.solicitudInfo && (
-                <div className="alerta-operador">
-                  <strong>Aviso del operador:</strong> Central 119 solicita información adicional
-                  sobre tu emergencia.
-                </div>
-              )}
-
-              <div className="caja-radicado-dark">
+            {reporteActual ? (
+              <>
                 <div>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>
-                    Número de Radicado
-                  </div>
-                  <div className="numero-radicado-grande">#{reporteActual.radicado}</div>
+                  <h2 style={{ margin: '0 0 6px', fontSize: '1.25rem' }}>
+                    Reporte recibido en Central 119
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+                    El radio operador ya ve tu punto exacto en el mapa de Cali (
+                    {reporteActual.comuna ? `${reporteActual.comuna} · ` : ''}Barrio{' '}
+                    <strong>{reporteActual.barrio}</strong>). Mantén tu teléfono{' '}
+                    <strong>{reporteActual.telefono}</strong> disponible.
+                  </p>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Grupo</div>
+
+                {reporteActual.solicitudInfo && (
+                  <div className="alerta-operador">
+                    <strong>Aviso del operador:</strong> Central 119 solicita información adicional
+                    sobre tu emergencia.
+                  </div>
+                )}
+
+                <div className="caja-radicado-dark">
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>
+                      Número de Radicado
+                    </div>
+                    <div className="numero-radicado-grande">#{reporteActual.radicado}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Grupo</div>
+                    <div
+                      style={{
+                        fontSize: '0.84rem',
+                        fontWeight: 800,
+                        color: colorDeGrupo(reporteActual.grupo),
+                      }}
+                    >
+                      {reporteActual.grupo} · {grupoInfo?.nombre}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fotos adjuntadas en el reporte confirmado */}
+                {reporteActual.fotos && reporteActual.fotos.length > 0 && (
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        color: '#94a3b8',
+                        marginBottom: 8,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Fotos enviadas en este reporte ({reporteActual.fotos.length})
+                    </div>
+                    <div className="operador-fotos-grid">
+                      {reporteActual.fotos.map((f, idx) => {
+                        const srcFoto = typeof f === 'string' ? f : f?.url
+                        if (!srcFoto) return null
+                        return (
+                          <div key={idx} className="operador-foto-thumb" style={{ cursor: 'default' }}>
+                            <img src={srcFoto} alt={`Foto enviada ${idx + 1}`} />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div>
                   <div
                     style={{
-                      fontSize: '0.84rem',
-                      fontWeight: 800,
-                      color: colorDeGrupo(reporteActual.grupo),
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      color: '#94a3b8',
+                      marginBottom: 10,
+                      textTransform: 'uppercase',
                     }}
                   >
-                    {reporteActual.grupo} · {grupoInfo?.nombre}
+                    Estado en tiempo real (Sincronizado con el Operador)
                   </div>
-                </div>
-              </div>
 
-              <div>
-                <div
-                  style={{
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    color: '#94a3b8',
-                    marginBottom: 10,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Estado en tiempo real (Sincronizado con el Operador)
-                </div>
-
-                {reporteActual.estado === 'Descartado' ? (
-                  <div className="alerta-operador">
-                    Este reporte fue marcado como <strong>Descartado</strong> (falso o duplicado)
-                    por el radio operador.
-                  </div>
-                ) : (
-                  <ol className="lista-estados-dark">
-                    {ESTADOS_FLUJO.map((paso, idx) => {
-                      const nombresFlujo = ESTADOS_FLUJO.map((p) => p.nombre)
-                      const indiceActual = nombresFlujo.indexOf(reporteActual.estado)
-                      const esCompletado = idx < indiceActual
-                      const esActual = paso.nombre === reporteActual.estado
-                      return (
-                        <li
-                          key={paso.nombre}
-                          className={`paso-dark ${esCompletado ? 'completado' : ''} ${
-                            esActual ? 'actual' : ''
-                          }`}
-                        >
-                          <span className="punto-paso" />
-                          <div>
-                            <strong>
-                              {idx + 1}. {paso.nombre}
-                            </strong>
-                            <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: 2 }}>
-                              {paso.nombre === 'Unidad despachada' && reporteActual.unidad
-                                ? `Unidad en camino: ${reporteActual.unidad}`
-                                : paso.detalle}
-                            </div>
-                          </div>
-                        </li>
-                      )
-                    })}
-                  </ol>
-                )}
-              </div>
-
-              <button
-                type="button"
-                className="btn-secundario-dark"
-                onClick={iniciarNuevoReporte}
-              >
-                Limpiar para registrar otro reporte
-              </button>
-            </>
-          ) : (
-            <>
-              <div>
-                <h2 style={{ margin: '0 0 6px', fontSize: '1.2rem' }}>
-                  Seguimiento en vivo de tu emergencia
-                </h2>
-                <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
-                  Completa los campos obligatorios y presiona <strong>Enviar reporte</strong>. Aquí
-                  recibirás al instante tu número de radicado y verás los cambios que haga el radio
-                  operador.
-                </p>
-              </div>
-
-              <ol className="lista-estados-dark">
-                {ESTADOS_FLUJO.map((paso, idx) => (
-                  <li key={paso.nombre} className="paso-dark">
-                    <span className="punto-paso" />
-                    <div>
-                      <strong>
-                        {idx + 1}. {paso.nombre}
-                      </strong>
-                      <div style={{ fontSize: '0.76rem', color: '#94a3b8', marginTop: 2 }}>
-                        {paso.detalle}
-                      </div>
+                  {reporteActual.estado === 'Descartado' ? (
+                    <div className="alerta-operador">
+                      Este reporte fue marcado como <strong>Descartado</strong> (falso o duplicado)
+                      por el radio operador.
                     </div>
-                  </li>
-                ))}
-              </ol>
-            </>
-          )}
+                  ) : (
+                    <ol className="lista-estados-dark">
+                      {ESTADOS_FLUJO.map((paso, idx) => {
+                        const nombresFlujo = ESTADOS_FLUJO.map((p) => p.nombre)
+                        const indiceActual = nombresFlujo.indexOf(reporteActual.estado)
+                        const esCompletado = idx < indiceActual
+                        const esActual = paso.nombre === reporteActual.estado
+                        return (
+                          <li
+                            key={paso.nombre}
+                            className={`paso-dark ${esCompletado ? 'completado' : ''} ${
+                              esActual ? 'actual' : ''
+                            }`}
+                          >
+                            <span className="punto-paso" />
+                            <div>
+                              <strong>
+                                {idx + 1}. {paso.nombre}
+                              </strong>
+                              <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: 2 }}>
+                                {paso.nombre === 'Unidad despachada' && reporteActual.unidad
+                                  ? `Unidad en camino: ${reporteActual.unidad}`
+                                  : paso.detalle}
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })}
+                    </ol>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="btn-secundario-dark"
+                  onClick={iniciarNuevoReporte}
+                >
+                  Limpiar para registrar otro reporte
+                </button>
+              </>
+            ) : (
+              <>
+                <div>
+                  <h2 style={{ margin: '0 0 6px', fontSize: '1.2rem' }}>
+                    Seguimiento en vivo de tu emergencia
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+                    Completa los campos obligatorios y presiona <strong>Enviar reporte</strong>. Aquí
+                    recibirás al instante tu número de radicado y verás los cambios que haga el radio
+                    operador.
+                  </p>
+                </div>
+
+                <ol className="lista-estados-dark">
+                  {ESTADOS_FLUJO.map((paso, idx) => (
+                    <li key={paso.nombre} className="paso-dark">
+                      <span className="punto-paso" />
+                      <div>
+                        <strong>
+                          {idx + 1}. {paso.nombre}
+                        </strong>
+                        <div style={{ fontSize: '0.76rem', color: '#94a3b8', marginTop: 2 }}>
+                          {paso.detalle}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )}
           </aside>
         </div>
       </main>

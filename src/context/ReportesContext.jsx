@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { BARRIOS } from '../data/barrios.js'
+import { BARRIOS, COMUNAS_CALI } from '../data/barrios.js'
 
 const STORAGE_KEY = 'bomberos_119_reportes_clean_v2'
 const LEGACY_STORAGE_KEY = 'bomberos_119_reportes_v1'
@@ -51,7 +51,10 @@ export function ReportesProvider({ children }) {
 
   // Agregar nuevo reporte desde /reportar
   const agregarReporte = (datos) => {
-    const barrioObj = BARRIOS.find((b) => b.nombre === datos.barrio)
+    const comunaObj = COMUNAS_CALI.find((c) => c.codigo === datos.comuna)
+    const barrioObj = BARRIOS.find(
+      (b) => b.nombre.toLowerCase() === (datos.barrio || '').trim().toLowerCase()
+    )
     const siguienteId =
       reportes.length > 0 ? Math.max(...reportes.map((r) => Number(r.id) || 0)) + 1 : 1
 
@@ -67,8 +70,8 @@ export function ReportesProvider({ children }) {
       solicitudInfo: false,
       ...datos,
       grupo: Number(datos.grupo),
-      lat: datos.lat ?? barrioObj?.lat ?? 3.437,
-      lng: datos.lng ?? barrioObj?.lng ?? -76.522,
+      lat: datos.lat ?? barrioObj?.lat ?? comunaObj?.lat ?? 3.437,
+      lng: datos.lng ?? barrioObj?.lng ?? comunaObj?.lng ?? -76.522,
     }
 
     setReportes((prev) => [nuevo, ...prev])

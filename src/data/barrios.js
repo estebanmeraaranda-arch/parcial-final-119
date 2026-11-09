@@ -1,5 +1,30 @@
-// Barrios de Cali con coordenadas APROXIMADAS (centro del barrio).
-// Sirven para ubicar los reportes en el mapa; el equipo puede agregar más.
+// Comunas de Santiago de Cali (1 a 22) con coordenadas aproximadas para centrar el mapa
+export const COMUNAS_CALI = [
+  { codigo: 'Comuna 1', nombre: 'Comuna 1 — Ladera Noroccidental (Terrón Colorado, Aguacatal)', lat: 3.458, lng: -76.562 },
+  { codigo: 'Comuna 2', nombre: 'Comuna 2 — Norte (Granada, Versalles, Chipichape, La Flora)', lat: 3.474, lng: -76.528 },
+  { codigo: 'Comuna 3', nombre: 'Comuna 3 — Centro Histórico (San Antonio, El Peñón, San Pascual)', lat: 3.448, lng: -76.541 },
+  { codigo: 'Comuna 4', nombre: 'Comuna 4 — Nororiente (Calima, Jorge Isaacs, Salomia)', lat: 3.478, lng: -76.508 },
+  { codigo: 'Comuna 5', nombre: 'Comuna 5 — Chiminangos / Metropolitano del Norte', lat: 3.482, lng: -76.498 },
+  { codigo: 'Comuna 6', nombre: 'Comuna 6 — Floralia, Alcázares, Petecuy', lat: 3.485, lng: -76.492 },
+  { codigo: 'Comuna 7', nombre: 'Comuna 7 — Alfonso López, Puerto Mallarino, Siete de Agosto', lat: 3.465, lng: -76.488 },
+  { codigo: 'Comuna 8', nombre: 'Comuna 8 — Atanasio Girardot, Chapinero, El Troncal', lat: 3.448, lng: -76.508 },
+  { codigo: 'Comuna 9', nombre: 'Comuna 9 — Alameda, Junín, Bretaña, Guayaquil', lat: 3.441, lng: -76.527 },
+  { codigo: 'Comuna 10', nombre: 'Comuna 10 — Paso del Comercio, Cristóbal Colón, La Selva', lat: 3.418, lng: -76.526 },
+  { codigo: 'Comuna 11', nombre: 'Comuna 11 — Aguablanca, San Carlos, La Independencia', lat: 3.422, lng: -76.509 },
+  { codigo: 'Comuna 12', nombre: 'Comuna 12 — Nueva Floresta, Villanueva, Doce de Octubre', lat: 3.432, lng: -76.502 },
+  { codigo: 'Comuna 13', nombre: 'Comuna 13 — El Poblado, Pondaje, Calipso, Comuneros II', lat: 3.426, lng: -76.492 },
+  { codigo: 'Comuna 14', nombre: 'Comuna 14 — Manuela Beltrán, Alfonso Bonilla Aragón, Marroquín', lat: 3.432, lng: -76.478 },
+  { codigo: 'Comuna 15', nombre: 'Comuna 15 — Mojica, El Vallado, Ciudad Córdoba, Laureano Gómez', lat: 3.412, lng: -76.488 },
+  { codigo: 'Comuna 16', nombre: 'Comuna 16 — Mariano Ramos, Unión de Vivienda Popular, República de Israel', lat: 3.404, lng: -76.505 },
+  { codigo: 'Comuna 17', nombre: 'Comuna 17 — Valle del Lili, El Ingenio, Caney, Capri, Limonar', lat: 3.385, lng: -76.526 },
+  { codigo: 'Comuna 18', nombre: 'Comuna 18 — Meléndez, Nápoles, Los Chorros, Alto Jordán', lat: 3.383, lng: -76.548 },
+  { codigo: 'Comuna 19', nombre: 'Comuna 19 — San Fernando, El Lido, Tequendama, Miraflores', lat: 3.428, lng: -76.543 },
+  { codigo: 'Comuna 20', nombre: 'Comuna 20 — Siloé, Belén, Lleras Camargo, Brisas de Mayo', lat: 3.425, lng: -76.56 },
+  { codigo: 'Comuna 21', nombre: 'Comuna 21 — Desepaz, Compartir, Talanga, Potrero Grande', lat: 3.424, lng: -76.465 },
+  { codigo: 'Comuna 22', nombre: 'Comuna 22 — Ciudad Jardín, Pance, Parcelaciones Pance', lat: 3.358, lng: -76.535 },
+]
+
+// Barrios de Cali con coordenadas APROXIMADAS (se mantienen por compatibilidad).
 export const BARRIOS = [
   { nombre: 'San Antonio', lat: 3.4475, lng: -76.541 },
   { nombre: 'Granada', lat: 3.46, lng: -76.533 },
