@@ -31,6 +31,13 @@ export default function Operador() {
 
   const seleccionado = reportes.find((r) => r.id === seleccionadoId) || null
 
+  // Si entra un nuevo reporte y no había ninguno seleccionado, seleccionarlo automáticamente
+  useEffect(() => {
+    if (!seleccionado && reportes.length > 0) {
+      setSeleccionadoId(reportes[0].id)
+    }
+  }, [reportes, seleccionado])
+
   // Sincronizar el selector de unidad cuando cambia el reporte seleccionado
   useEffect(() => {
     if (seleccionado?.unidad) {
